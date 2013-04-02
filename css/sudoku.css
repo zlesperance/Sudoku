@@ -1,0 +1,25 @@
+#sudokuTable{
+	border-collapse:collapse;
+}
+#sudokuTable td{
+	width:24px;
+	border:1px solid #000;
+	text-align:center;
+	padding:4px;
+}
+#sudokuTable .cellTop td{
+	border-top:2px solid #000;
+}
+#sudokuTable .cellBot td{
+	border-bottom:2px solid #000;
+}
+#sudokuTable tr > td:nth-child(3n){
+	border-right:2px solid #000;
+}
+#sudokuTable tr > td:nth-child(3n + 1){
+	border-left:2px solid #000;
+}
+.entry{
+	color:#00F;
+	font-weight:bold;
+}

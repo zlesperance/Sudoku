@@ -11,6 +11,8 @@ function generateSudoku()
 	var grid = [];
 	var result;
 	var attempts = 0;
+	// Doesn't always generate a good sudoku, so keep trying until we have a good one.
+	// To prevent potential infinite loop, only try a max of 50 times (usually generates a good one between 1 and 10 tries)
 	do{
 		fill2DArray(grid,9,9,EMPTY_VALUE);
 		result = generateGrid(grid, 0, 0);
@@ -25,13 +27,13 @@ function generateSudoku()
 function generateGrid(grid, row, col)
 {
 	var possibleNums = [1,2,3,4,5,6,7,8,9];
-	for(var x = 0; x<row; x++)
+	for(var x = 0; x < row; x++)
 	{
 		var numIndex = possibleNums.indexOf(grid[x][col]);
 		if(numIndex > -1)
 			possibleNums.splice(numIndex,1);
 	}
-	for(var y=0; y<col && possibleNums.length; y++)
+	for(var y = 0; y < col && possibleNums.length; y++)
 	{
 		var numIndex = possibleNums.indexOf(grid[row][y]);
 		if(numIndex > -1)
@@ -42,7 +44,7 @@ function generateGrid(grid, row, col)
 	var cellStartX = row - (row % 3), cellStartY = col - (col % 3);
 	for(var x = cellStartX; x < (cellStartX + 3) && possibleNums.length; x++)
 	{
-		for(var y=cellStartY; y < (cellStartY + 3) && possibleNums.length; y++)
+		for(var y = cellStartY; y < (cellStartY + 3) && possibleNums.length; y++)
 		{
 			if(grid[x][y] != EMPTY_VALUE)
 			{
@@ -71,7 +73,7 @@ function generateGrid(grid, row, col)
 	}
 	randomizeArray(possibleNums);
 	var solutionFound = false;
-	for(var i=0; i<possibleNums.length && !solutionFound; i++)
+	for(var i = 0; i < possibleNums.length && !solutionFound; i++)
 	{
 		grid[row][col] = possibleNums[i];
 		solutionFound = generateGrid(grid,row,col+1);
@@ -94,12 +96,12 @@ function randomizeArray(myArray)
    	}
 }
 
-function fill2DArray(myArray,len,width,val)
+function fill2DArray(myArray, len, width, val)
 {
-	for(var x=0; x<len; x++)
+	for(var x = 0; x < len; x++)
 	{
 		myArray[x] = [];
-		for(var y=0; y<width; y++)
+		for(var y = 0; y < width; y++)
 		{
 			myArray[x][y] = val;
 		}
@@ -137,12 +139,12 @@ function constructPuzzle(grid)
 	}
 }
 
-function removeHintIfAble(grid,x,y)
+function removeHintIfAble(grid, x, y)
 {
 	if(grid[x][y] == EMPTY_VALUE)
 		return 0;
 		
-	if(checkForSolvability(grid,x,y) && checkForSolvability(grid,grid.length - x - 1, grid[0].length - y - 1))
+	if(checkForSolvability(grid, x, y) && checkForSolvability(grid, grid.length - x - 1, grid[0].length - y - 1))
 	{
 		grid[x][y] = EMPTY_VALUE;
 		grid[grid.length - x - 1][grid[0].length - y - 1] = EMPTY_VALUE;
@@ -151,7 +153,7 @@ function removeHintIfAble(grid,x,y)
 	return 0;
 }
 
-function checkForSolvability(grid,x,y)
+function checkForSolvability(grid, x, y)
 {
 	/*
 		TODO:
@@ -176,15 +178,16 @@ function checkForSolvability(grid,x,y)
 		""			   				x				   x			 Medium
 		""			   				 				   x			 None
 	*/
-	if(solvableByElimination(grid,x,y))
+	if(solvableByElimination(grid, x, y))
 		return true;
 		
-	if(solvableByCellElimination(grid,x,y))
+	if(solvableByCellElimination(grid, x, y))
 		return true;
 		
 	return false;
 }
-function solvableByElimination(grid,x,y)
+
+function solvableByElimination(grid, x, y)
 {
 	var possibleNums = [1,2,3,4,5,6,7,8,9];
 	for(var rowIndex = 0; rowIndex < grid.length; rowIndex++)
@@ -211,7 +214,7 @@ function solvableByElimination(grid,x,y)
 	{
 		return true;
 	}
-	var cellStartX = x - (x%3), cellStartY = y - (y%3);
+	var cellStartX = x - (x % 3), cellStartY = y - (y % 3);
 	for(var rowIndex = cellStartX; rowIndex < cellStartX + 3; rowIndex++)
 	{
 		for(var colIndex = cellStartY; colIndex < cellStartY + 3; colIndex++)
@@ -229,9 +232,10 @@ function solvableByElimination(grid,x,y)
 	
 	return false;
 }
-function solvableByCellElimination(grid,x,y)
+
+function solvableByCellElimination(grid, x, y)
 {
-	var openCells = findOpenCellSquares(grid,x,y);
+	var openCells = findOpenCellSquares(grid, x, y);
 	//If we have open squares in the 3x3 cell, try to find (x,y) by process of elimination of other possible options
 	/*
 		Example:
@@ -268,9 +272,10 @@ function solvableByCellElimination(grid,x,y)
 	
 	return false;
 }
-function findOpenCellSquares(grid,x,y)
+
+function findOpenCellSquares(grid, x, y)
 {
-	var cellBoundX = x - (x%3), cellBoundY = y - (y%3);
+	var cellBoundX = x - (x % 3), cellBoundY = y - (y % 3);
 	var squareArr = [];
 	for(var rowIndex = cellBoundX; rowIndex < cellBoundX + 3; rowIndex++)
 	{
@@ -284,7 +289,8 @@ function findOpenCellSquares(grid,x,y)
 	}
 	return squareArr;
 }
-function isValid(grid,x,y,val)
+
+function isValid(grid, x, y, val)
 {
 	//This function checks (x,y) to see if val can occupy it
 	var rowIndex = 0;
@@ -310,8 +316,8 @@ function isValid(grid,x,y,val)
 	if(provenInvalid)
 		return false;
 		
-	rowIndex = x - (x%3);
-	colIndex = y - (y%3);
+	rowIndex = x - (x % 3);
+	colIndex = y - (y % 3);
 	cellWallX = rowIndex + 3;
 	cellWallY = colIndex + 3;
 	while(rowIndex < cellWallX && !provenInvalid)
